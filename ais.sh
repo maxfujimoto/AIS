@@ -34,7 +34,7 @@ POST_CHROOT_APPS="bat ripgrep grep stow fzf"
 # Checks if first arguemnt dir exist, if no clones second arguemnt URLs git repo into $1.
 check_git () 
 {
-	if [! -d "$1"] ; then
+	if [ ! -d "$1" ] ; then
 		git clone $2 $1
 	fi
 }
@@ -49,9 +49,10 @@ mkdir -p .Trash
 
 echo "Directories Complete"
 
+
 echo "Enabling Arch Support"
 
-cat ./pacman.conf >> /etc/pacman.conf
+cp ./pacman.conf /etc/pacman.conf
 
 echo "Orthotics Complete"
 
@@ -63,15 +64,22 @@ pacman -Syyu
 
 echo "System Updte Complete"
 
+
 echo "Instaling Post-Instalation Packages"
 
 pacman -S $POST_CHROOT_APPS
 
+echo "Post-Instalation Packages Complete"
+
+
+
 echo "Installing .dotfiles"
 
-check_git https://github.com/maxfujimoto/.dotfiles ~/.dotfiles
+check_git $HOME/.dotfiles https://github.com/maxfujimoto/.dotfiles
 
-stow .
+stow -t $HOME -d $HOME/.dotfiles .
+
+source $HOME/.bashrc
+xrdb $HOME/.Xresources
 
 echo ".dotfiles Installed"
-
